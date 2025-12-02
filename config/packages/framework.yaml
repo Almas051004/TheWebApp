@@ -7,6 +7,13 @@ framework:
 
     #esi: true
     #fragments: true
+    
+    # Trust X-Forwarded-* headers from proxies like ngrok
+    trusted_headers:
+        - x-forwarded-for
+        - x-forwarded-host
+        - x-forwarded-port
+        - x-forwarded-proto
 
 when@test:
     framework:

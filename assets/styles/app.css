@@ -1,3 +1,58 @@
-body {
-    background-color: skyblue;
+/* Project responsive helpers and overrides for small screens */
+
+:root{
+        --container-max: 1200px;
 }
+
+/* Base color kept for compatibility */
+body {
+        background-color: #e3f2fd;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+/* Toolbar/search responsive behavior */
+.search-input{
+        width:100%;
+        max-width:280px;
+}
+
+/* Make tables scroll on small devices by default (Bootstrap already helps) */
+.table-responsive { overflow-x:auto; }
+
+/* Stacked table pattern for very small screens */
+@media (max-width: 576px) {
+    .table-responsive--stacked table thead { display: none; }
+    .table-responsive--stacked table, 
+    .table-responsive--stacked tbody, 
+    .table-responsive--stacked tr, 
+    .table-responsive--stacked td { display: block; width: 100%; }
+
+    .table-responsive--stacked td { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        padding: .75rem 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table-responsive--stacked td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #495057;
+        margin-right: .75rem;
+    }
+
+    /* Compact card look for rows */
+    .table-responsive--stacked tr { margin-bottom: .5rem; background: #fff; border-radius: .5rem; box-shadow: 0 6px 18px rgba(0,0,0,.04); overflow: hidden; }
+
+    /* Make toolbar elements wrap nicely */
+    .d-flex.align-items-center.gap-2.mb-3 { flex-wrap: wrap; gap: .5rem; }
+    .position-relative { width: 100%; }
+    .position-relative .bi { left: 10px; }
+}
+
+/* Slight spacing tweaks for medium+ screens */
+@media (min-width: 577px) {
+    .table-responsive--stacked td { padding: .75rem .75rem; }
+}
+

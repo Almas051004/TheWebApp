@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Регистрация - The Web App{% endblock %}
+
+{% block body %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+
+    <div class="card shadow-lg border-0" style="max-width: 420px; width: 100%; border-radius: 16px;">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <p class="text-muted small">Добро пожаловать в The Web App</p>
+                <h3 class="fw-bold">Регистрация</h3>
+            </div>
+
+            
+
+            {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate', 'id': 'registrationForm'}}) }}
+
+                <div class="mb-4 position-relative">
+                    {% set name_classes = 'form-control form-control-lg ps-5' %}
+                    {% if registrationForm.name.vars.errors|length > 0 %}
+                        {% set name_classes = name_classes ~ ' is-invalid' %}
+                    {% endif %}
+                    {{ form_widget(registrationForm.name, {
+                        'attr': {
+                            'class': name_classes,
+                            'placeholder': 'Имя'
+                        }
+                    }) }}
+                    <i class="bi bi-person position-absolute top-50 start-3 translate-middle-y text-muted"></i>
+                </div>
+
+                <div class="mb-4 position-relative">
+                    {% set email_classes = 'form-control form-control-lg ps-5' %}
+                    {% if registrationForm.email.vars.errors|length > 0 %}
+                        {% set email_classes = email_classes ~ ' is-invalid' %}
+                    {% endif %}
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {
+                            'class': email_classes,
+                            'placeholder': 'E-mail',
+                            'id': 'registration_email'
+                        }
+                    }) }}
+                    <i class="bi bi-envelope position-absolute top-50 start-3 translate-middle-y text-muted"></i>
+                </div>
+
+                <div class="mb-4 position-relative">
+                    {% set pass_classes = 'form-control form-control-lg ps-5' %}
+                    {% if registrationForm.plainPassword.vars.errors|length > 0 %}
+                        {% set pass_classes = pass_classes ~ ' is-invalid' %}
+                    {% endif %}
+                    {{ form_widget(registrationForm.plainPassword, {
+                        'attr': {
+                            'class': pass_classes,
+                            'placeholder': 'Пароль'
+                        }
+                    }) }}
+                    <i class="bi bi-lock position-absolute top-50 start-3 translate-middle-y text-muted"></i>
+                </div>
+
+                <div class="form-check mb-4">
+                    {% set agree_classes = 'form-check-input' %}
+                    {% if registrationForm.agreeTerms.vars.errors|length > 0 %}
+                        {% set agree_classes = agree_classes ~ ' is-invalid' %}
+                    {% endif %}
+                    {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': agree_classes}}) }}
+                    {{ form_label(registrationForm.agreeTerms, 'Я принимаю условия сайта', {
+                        'label_attr': {'class': 'form-check-label text-muted'}
+                    }) }}
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill fw-semibold">
+                    Зарегистрироваться
+                </button>
+
+            {{ form_end(registrationForm) }}
+
+            <div class="text-center mt-4">
+                <p class="text-muted">
+                    Уже есть аккаунт?
+                    <a href="{{ path('app_sign_in') }}" class="text-primary fw-medium text-decoration-none">Войти</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function(){
+        const formEl = document.getElementById('registrationForm');
+        if (formEl) {
+            formEl.addEventListener('submit', function(e) {
+                const emailEl = document.getElementById('registration_email');
+                if (emailEl) {
+                    const val = emailEl.value.trim();
+                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!re.test(val)) {
+                        e.preventDefault();
+                        emailEl.classList.add('is-invalid');
+                        if (window.notifyError) {
+                            window.notifyError('Введите корректный e-mail');
+                        }
+                        emailEl.focus();
+                        return false;
+                    }
+                }
+            });
+        }
+        const errors = [];
+
+        {% for flash_error in app.flashes('verify_email_error') %}
+            errors.push({ text: {{ flash_error|json_encode|raw }}, type: 'error' });
+        {% endfor %}
+
+        {% for err in registrationForm.vars.errors %}
+            errors.push({ text: {{ err.message|json_encode|raw }}, type: 'error' });
+        {% endfor %}
+
+        {% set fields = {'name':'Имя','email':'E-mail','plainPassword':'Пароль','agreeTerms':'Согласие'} %}
+        {% for fname, label in fields %}
+            {% set field = attribute(registrationForm, fname) %}
+            {% if field.vars.errors|length > 0 %}
+                {% for err in field.vars.errors %}
+                    errors.push({ text: {{ (label ~ ': ' ~ err.message)|json_encode|raw }}, type: 'error' });
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+        if (errors.length > 0) {
+            setTimeout(() => {
+                errors.forEach(e => {
+                    if (window.notifyError) {
+                        window.notifyError(e.text);
+                    }
+                });
+            }, 50);
+        }
+    })();
+</script>
+{% endblock %}
